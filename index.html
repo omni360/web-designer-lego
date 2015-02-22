@@ -1,0 +1,93 @@
+<!doctype html>
+
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <title>Lego builder</title>
+  <link href="css/mainStyle.css" rel="stylesheet">
+</head>
+
+<body>
+  <ul id="menu-bar">
+    <li>
+      <span>Fichier</span>
+      <ul>
+        <li id="menu-item-export">Exporter</li>
+        <li id="menu-item-import">Importer</li>
+      </ul>
+    </li>
+    <li>
+      <span>A propos</span>
+      <ul>
+        <li id="menu-item-help">Aide</li>
+      </ul>
+    </li>
+  </ul>
+
+  <div id="appContainer">
+    <div id="title-bar"></div>
+
+    <div id="help-panel">
+      <h1>Utilitaire de construction Lego</h1>
+      <p>
+        Le but de cet outil est de réaliser une construction en Légo virtuelle.
+        <br/> Cette construction peut ensuite etre exporté vers un bras robot (
+        <em>encore en développement</em>).
+      </p>
+
+      <h2>Controles</h2>
+      <ul>
+        <li>
+          <strong>Clic droit + mouvement</strong> : déplacement dans la scene</li>
+        <li>
+          <strong>Clic millieu + mouvement</strong> : rotation de la scène</li>
+        <li>
+          <strong>Roulette souris</strong> : zoom</li>
+        <li>
+          <strong>C</strong> : mode création</li>
+        <li>
+          <strong>D</strong> : mode suppression</li>
+        <li>
+          <strong>R</strong> : rotation de la brique</li>
+        <li>
+          <strong>Espace ou clic</strong> : action</li>
+        <li>
+          <strong>H</strong> : afficher / masquer l'aide</li>
+      </ul>
+
+    </div>
+
+    <div id="action-bar">
+      <div id="create-btn" class="btn" title="Raccourci C"></div>
+      <div id="delete-btn" class="btn" title="Raccourci D"></div>
+      <div id="rotate-btn" class="btn" title="Raccourci R"></div>
+      <div class="btn">
+        <ul id="color-picker">
+          <li style="background-color: #c70876"></li>
+          <li style="background-color: #2e6df5"></li>
+          <li style="background-color: #c4bb0b"></li>
+          <li style="background-color: #f9020e"></li>
+          <li style="background-color: #29aa15"></li>
+          <li style="background-color: #dd562d"></li>
+        </ul>
+        <div id="picker-btn" class="btn"> </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="node_modules/three/three.min.js"></script>
+  <script src="node_modules/jquery/dist/jquery.min.js"></script>
+  <script src="lib/OrbitControls.js"></script>
+  <script src="lib/keypress-2.1.0.min.js"></script>
+
+  <script src="app/common.js"></script>
+
+  <script src="app/Lego.js"></script>
+  <script src="app/Space.js"></script>
+  <script src="app/Playground.js"></script>
+  <script src="app/Ground.js"></script>
+  <script src="app/Application.js"></script>
+</body>
+
+</html>
