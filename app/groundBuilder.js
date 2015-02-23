@@ -1,6 +1,7 @@
 var THREE = require('three');
+var Plot = require('./Plot');
 var geometry = require('./geometry');
-var plotGeometry = new THREE.CylinderGeometry(0.32, 0.32, 1.2 / 3, 16);
+
 var groundGeometry = new THREE.PlaneBufferGeometry(64, 64);
 
 function build() {
@@ -15,7 +16,7 @@ function build() {
 
   for (var x = -31.5; x <= 31.5; x++) {
     for (var y = -31.5; y <= 31.5; y++) {
-      var cyl = new THREE.Mesh(plotGeometry, material);
+      var cyl = new Plot(material);
       cyl.rotation.x = geometry.degToRad(90);
       cyl.position.set(x, y, 0.2);
 

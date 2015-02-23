@@ -5,8 +5,8 @@ var Playground = require('./Playground');
 var renderer = null,
   scene = null,
   camera = null,
-  space = null,
   controls = null,
+  space = null,
   playground = null;
 
 function initScene() {
