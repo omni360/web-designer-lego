@@ -3,16 +3,10 @@ var groundBuilder = require('./groundBuilder');
 var legoBuilder = require('./legoBuilder');
 var geometry = require('./geometry');
 
-module.exports = function(scene, camera, space) {
-
-  "use strict";
-
-  var keyListener = new window.keypress.Listener();
-
-  var titleBar = $("#title-bar"),
-    mouseX = 0,
-    mouseY = 0,
-    mode = '';
+var Playground = function(scene, camera, space) {
+  this.scene = scene;
+  this.camera = camera;
+  this.space = space;
 
   scene.add(new THREE.AmbientLight(0x222222));
   var light = new THREE.PointLight(0xffffff);
@@ -23,124 +17,110 @@ module.exports = function(scene, camera, space) {
   scene.add(rigidObjetcts);
   space.watch(rigidObjetcts);
 
-  var ground = groundBuilder.build();
-  rigidObjetcts.add(ground);
+  rigidObjetcts.add(groundBuilder.build());
 
   var ghost = legoBuilder.build2x4();
   ghost.material.opacity = 0.60;
   ghost.position.y += 0.6;
   ghost.name = "ghost";
 
-  setCreateMode();
+  this.rigidObjetcts = rigidObjetcts;
+  this.ghost = ghost;
 
+  this.mouse = {
+    x: 0,
+    y: 0
+  };
+  this.mode = '';
 
-  function setCreateMode() {
-    if (mode == 'CREATE') return;
+  this.setCreateMode();
+  this._configureMouse();
+};
 
-    mode = 'CREATE';
-    scene.add(ghost);
-    titleBar.html("Mode ajout<br/><em>Espace ou clic pour créer un légo</em>");
+Playground.prototype.setCreateMode = function() {
+  if (this.mode == 'CREATE') return;
+
+  this.mode = 'CREATE';
+  this.scene.add(this.ghost);
+  $("#title-bar").html("Mode ajout<br/><em>Espace ou clic pour créer un légo</em>");
+};
+
+Playground.prototype.setDeleteMode = function() {
+  if (this.mode == 'DELETE') return;
+
+  this.mode = 'DELETE';
+  this.scene.remove(this.ghost);
+  $("#title-bar").html("Mode suppression<br/><em>Espace ou clic pour supprimer un légo</em>");
+};
+
+Playground.prototype.computeIntersects = function() {
+  var vector = new THREE.Vector3(
+    (this.mouse.x / window.innerWidth) * 2 - 1, -(this.mouse.y / window.innerHeight) * 2 + 1, 0.5);
+
+  vector.unproject(this.camera);
+  var raycaster = new THREE.Raycaster(
+    this.camera.position,
+    vector.sub(this.camera.position).normalize());
+
+  return raycaster.intersectObjects(this.rigidObjetcts.children);
+};
+
+Playground.prototype.rotateGhost = function() {
+  this.ghost.rotation.y += geometry.degToRad(90);
+};
+
+Playground.prototype.setGhostColor = function(cssColor) {
+  this.ghost.material.color.setStyle(cssColor);
+};
+
+Playground.prototype.buildBrick = function() {
+  if (this.space.isSpaceEmpty(this.ghost)) {
+    var brick = legoBuilder.build2x4();
+    this.rigidObjetcts.add(brick);
+
+    brick.position.copy(this.ghost.position);
+    brick.rotation.copy(this.ghost.rotation);
+    brick.material.color.copy(this.ghost.material.color);
+
+    this.space.requestUpdate = true;
   }
+};
 
-  function setDeleteMode() {
-    if (mode == 'DELETE') return;
+Playground.prototype.destroyBrick = function() {
+  var intersects = this.computeIntersects();
 
-    mode = 'DELETE';
-    scene.remove(ghost);
-    titleBar.html("Mode suppression<br/><em>Espace ou clic pour supprimer un légo</em>");
+  if (intersects.length === 0 || intersects[0].object.name == "ground")
+    return;
+
+  this.rigidObjetcts.remove(intersects[0].object);
+
+  this.space.requestUpdate = true;
+};
+
+Playground.prototype.handleUserAction = function() {
+  if (this.mode == "CREATE") {
+    this.buildBrick();
+  } else {
+    this.destroyBrick();
   }
+};
 
-  function computeIntersects() {
-    var vector = new THREE.Vector3((mouseX / window.innerWidth) * 2 - 1, -(mouseY / window.innerHeight) * 2 + 1, 0.5);
-
-    vector.unproject(camera);
-    var raycaster = new THREE.Raycaster(
-      camera.position,
-      vector.sub(camera.position).normalize());
-
-    return raycaster.intersectObjects(rigidObjetcts.children);
-  }
-
-  function rotateGhost() {
-    ghost.rotation.y += geometry.degToRad(90);
-  }
-
-  function buildBrick() {
-    if (space.isSpaceEmpty(ghost)) {
-      var brick = legoBuilder.build2x4();
-      rigidObjetcts.add(brick);
-
-      brick.position.copy(ghost.position);
-      brick.rotation.copy(ghost.rotation);
-      brick.material.color.copy(ghost.material.color);
-
-      space.requestUpdate = true;
-    }
-  }
-
-  function destroyBrick() {
-    var intersects = computeIntersects();
-
-    if (intersects.length === 0 || intersects[0].object.name == "ground")
-      return;
-
-    rigidObjetcts.remove(intersects[0].object);
-
-    space.requestUpdate = true;
-  }
-
-  function handleUserAction() {
-    if (mode == "CREATE") {
-      buildBrick();
-    } else {
-      destroyBrick();
-    }
-  }
-
-  function toggleHelp() {
-    $('#help-panel').fadeToggle();
-  }
-
-
+Playground.prototype._configureMouse = function() {
+  var playground = this;
   $(document).mousemove(function(event) {
     event.preventDefault();
 
-    mouseX = event.clientX;
-    mouseY = event.clientY;
+    playground.mouse.x = event.clientX;
+    playground.mouse.y = event.clientY;
 
-    var intersects = computeIntersects();
-
+    var intersects = playground.computeIntersects();
     if (intersects.length === 0) return;
 
     var intersect = intersects[0];
-    ghost.position.x = Math.round(intersect.point.x);
-    ghost.position.y = Math.round(intersect.point.y / 1.2) * 1.2 + 0.6;
-    ghost.position.z = Math.round(intersect.point.z);
-  });
-
-  keyListener.simple_combo("space", handleUserAction);
-  keyListener.simple_combo("c", setCreateMode);
-  keyListener.simple_combo("d", setDeleteMode);
-  keyListener.simple_combo("r", rotateGhost);
-  keyListener.simple_combo("h", toggleHelp);
-
-  $("canvas").click(function(event) {
-    if (event.button == THREE.MOUSE.LEFT) {
-      handleUserAction();
-    }
-  });
-
-  $("#rotate-btn").click(rotateGhost);
-  $("#create-btn").click(setCreateMode);
-  $("#delete-btn").click(setDeleteMode);
-  $('#menu-item-help').click(toggleHelp);
-
-  $('#picker-btn').click(function() {
-    $("#color-picker").slideToggle();
-  });
-  $('#color-picker li').click(function() {
-    var cssColor = $(this).css('background-color');
-    $("#color-picker").slideToggle();
-    ghost.material.color.setStyle(cssColor);
+    playground.ghost.position.x = Math.round(intersect.point.x);
+    playground.ghost.position.y = Math.round(intersect.point.y / 1.2) * 1.2 + 0.6;
+    playground.ghost.position.z = Math.round(intersect.point.z);
   });
 };
+
+module.exports = Playground;

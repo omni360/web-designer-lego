@@ -9,6 +9,53 @@ var renderer = null,
   space = null,
   playground = null;
 
+var keyListener = new window.keypress.Listener();
+
+function initGui() {
+  function toggleHelp() {
+    $('#help-panel').fadeToggle();
+  }
+
+  keyListener.simple_combo("space", function() {
+    playground.handleUserAction();
+  });
+  keyListener.simple_combo("c", function() {
+    playground.setCreateMode();
+  });
+  keyListener.simple_combo("d", function() {
+    playground.setDeleteMode();
+  });
+  keyListener.simple_combo("r", function() {
+    playground.rotateGhost();
+  });
+  keyListener.simple_combo("h", toggleHelp);
+
+  $("canvas").click(function(event) {
+    if (event.button == THREE.MOUSE.LEFT) {
+      playground.handleUserAction();
+    }
+  });
+
+  $("#rotate-btn").click(function() {
+    playground.rotateGhost();
+  });
+  $("#create-btn").click(function() {
+    playground.setCreateMode();
+  });
+  $("#delete-btn").click(function() {
+    playground.setDeleteMode();
+  });
+  $('#menu-item-help').click(toggleHelp);
+
+  $('#picker-btn').click(function() {
+    $("#color-picker").slideToggle();
+  });
+  $('#color-picker li').click(function() {
+    $("#color-picker").slideToggle();
+    playground.setGhostColor($(this).css('background-color'));
+  });
+}
+
 function initScene() {
   var width = window.innerWidth,
     height = window.innerHeight;
@@ -34,6 +81,8 @@ function initScene() {
   space = new Space();
 
   playground = new Playground(scene, camera, space);
+
+  initGui();
 
   requestAnimationFrame(render);
 }
