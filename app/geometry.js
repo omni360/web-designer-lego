@@ -3,5 +3,5 @@ module.exports.degToRad = function(deg) {
 };
 
 module.exports.radToDeg = function(rad) {
-  return rad / (Math.PI / 180);
+  return rad * (180 / Math.PI);
 };
