@@ -57,15 +57,32 @@ function initGui() {
   });
 }
 
+function webglAvailable() {
+  try {
+    var canvas = document.createElement('canvas');
+    return !!(window.WebGLRenderingContext && (
+      canvas.getContext('webgl') ||
+      canvas.getContext('experimental-webgl')));
+  } catch (e) {
+    return false;
+  }
+}
+
+
 function initScene() {
   var width = window.innerWidth,
     height = window.innerHeight;
 
   scene = new THREE.Scene();
 
-  renderer = new THREE.WebGLRenderer({
-    antialias: true
-  });
+  if (webglAvailable()) {
+    renderer = new THREE.WebGLRenderer({
+      antialias: true
+    });
+  } else {
+    renderer = new THREE.CanvasRenderer();
+  }
+
   renderer.setSize(width, height);
   renderer.setClearColor(0xFFFFFF, 1.0);
   $("#appContainer").append(renderer.domElement);
