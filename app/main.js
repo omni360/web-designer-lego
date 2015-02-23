@@ -93,8 +93,10 @@ function initScene() {
   scene.add(camera);
 
   controls = new OrbitControls(camera);
-  controls.mouseButtons.ORBIT = THREE.MOUSE.MIDDLE;
+  controls.mouseButtons.ORBIT = THREE.MOUSE.RIGHT;
   controls.mouseButtons.ZOOM = 4;
+  controls.mouseButtons.PAN = 5;
+  controls.keyPanSpeed = 15;
 
   space = new Space();
 
