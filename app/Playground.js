@@ -1,4 +1,9 @@
-var Playground = (function(scene, camera, space) {
+var THREE = require('three');
+var groundBuilder = require('./groundBuilder');
+var legoBuilder = require('./legoBuilder');
+var geometry = require('./geometry');
+
+module.exports = function(scene, camera, space) {
 
   "use strict";
 
@@ -18,9 +23,10 @@ var Playground = (function(scene, camera, space) {
   scene.add(rigidObjetcts);
   space.watch(rigidObjetcts);
 
-  var ground = createGround(rigidObjetcts);
+  var ground = groundBuilder.build();
+  rigidObjetcts.add(ground);
 
-  var ghost = createLego2x4();
+  var ghost = legoBuilder.build2x4();
   ghost.material.opacity = 0.60;
   ghost.position.y += 0.6;
   ghost.name = "ghost";
@@ -56,12 +62,13 @@ var Playground = (function(scene, camera, space) {
   }
 
   function rotateGhost() {
-    ghost.rotation.y += degToRad(90);
+    ghost.rotation.y += geometry.degToRad(90);
   }
 
   function buildBrick() {
     if (space.isSpaceEmpty(ghost)) {
-      var brick = createLego2x4(rigidObjetcts);
+      var brick = legoBuilder.build2x4();
+      rigidObjetcts.add(brick);
 
       brick.position.copy(ghost.position);
       brick.rotation.copy(ghost.rotation);
@@ -136,4 +143,4 @@ var Playground = (function(scene, camera, space) {
     $("#color-picker").slideToggle();
     ghost.material.color.setStyle(cssColor);
   });
-});
+};

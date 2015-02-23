@@ -6,8 +6,9 @@
   "author": "Arthur LE MOIGNE",
   "license": "MIT",
   "dependencies": {
+    "jquery": "2.1.3",
     "three": "0.69.0",
-    "jquery": "2.1.3"
+    "three-orbit-controls": "^69.0.4"
   },
   "devDependencies": {
     "grunt": "~0.4.5",
