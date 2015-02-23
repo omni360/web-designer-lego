@@ -9,10 +9,14 @@ module.exports = function(grunt) {
           ]
         }
       }
+    },
+    jshint: {
+      all: ["app/*.js"]
     }
   });
 
   grunt.loadNpmTasks('grunt-browserify');
+  grunt.loadNpmTasks('grunt-contrib-jshint');
 
-  grunt.registerTask('default', ['browserify']);
+  grunt.registerTask('default', ['jshint', 'browserify']);
 };
