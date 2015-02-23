@@ -57,27 +57,46 @@ function initGui() {
   });
 }
 
+function webglAvailable() {
+  try {
+    var canvas = document.createElement('canvas');
+    return !!(window.WebGLRenderingContext && (
+      canvas.getContext('webgl') ||
+      canvas.getContext('experimental-webgl')));
+  } catch (e) {
+    return false;
+  }
+}
+
+
 function initScene() {
   var width = window.innerWidth,
     height = window.innerHeight;
 
   scene = new THREE.Scene();
 
-  renderer = new THREE.WebGLRenderer({
-    antialias: true
-  });
+  if (webglAvailable()) {
+    renderer = new THREE.WebGLRenderer({
+      antialias: true
+    });
+  } else {
+    renderer = new THREE.CanvasRenderer();
+  }
+
   renderer.setSize(width, height);
   renderer.setClearColor(0xFFFFFF, 1.0);
   $("#appContainer").append(renderer.domElement);
 
   camera = new THREE.PerspectiveCamera(75, width / height, 1, 1000);
-  camera.position.set(0, 4, 4);
+  camera.position.set(0, 30, 10);
   camera.lookAt(new THREE.Vector3(0, 0, 0));
   scene.add(camera);
 
   controls = new OrbitControls(camera);
-  controls.mouseButtons.ORBIT = THREE.MOUSE.MIDDLE;
+  controls.mouseButtons.ORBIT = THREE.MOUSE.RIGHT;
   controls.mouseButtons.ZOOM = 4;
+  controls.mouseButtons.PAN = 5;
+  controls.keyPanSpeed = 15;
 
   space = new Space();
 
