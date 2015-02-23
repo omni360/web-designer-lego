@@ -88,7 +88,7 @@ function initScene() {
   $("#appContainer").append(renderer.domElement);
 
   camera = new THREE.PerspectiveCamera(75, width / height, 1, 1000);
-  camera.position.set(0, 4, 4);
+  camera.position.set(0, 30, 10);
   camera.lookAt(new THREE.Vector3(0, 0, 0));
   scene.add(camera);
 

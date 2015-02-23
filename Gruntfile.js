@@ -9,6 +9,11 @@ module.exports = function(grunt) {
         files: {
           "build/app.js": ["app/main.js"]
         }
+      },
+      dev: {
+        files: {
+          "build/app.min.js": ["app/main.js"]
+        }
       }
     },
     uglify: {
