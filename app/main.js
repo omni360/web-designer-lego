@@ -1,6 +1,7 @@
 var THREE = require('three');
 var OrbitControls = require('three-orbit-controls')(THREE);
 var Playground = require('./Playground');
+var Space = require('./Space');
 
 var renderer = null,
   scene = null,
