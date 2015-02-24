@@ -29,3 +29,7 @@ node_modules
 
 # Grunt build files
 build/
+
+# Build package
+wdl-dist/
+wdl-dist*.zip
