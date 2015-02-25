@@ -9,9 +9,13 @@ var Playground = function(scene, camera, space) {
   this.space = space;
 
   scene.add(new THREE.AmbientLight(0x222222));
-  var light = new THREE.PointLight(0xffffff);
-  light.position.set(2, 8, 5);
-  scene.add(light);
+  var light1 = new THREE.PointLight(0xffffff);
+  light1.position.set(+20, 20, +20);
+  scene.add(light1);
+
+  var light2 = new THREE.PointLight(0xffffff);
+  light2.position.set(-20, 20, -20);
+  scene.add(light2);
 
   var rigidObjetcts = new THREE.Object3D();
   scene.add(rigidObjetcts);
